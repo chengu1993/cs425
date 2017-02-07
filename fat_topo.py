@@ -8,31 +8,41 @@ class FatTopo(Topo):
         aggr_num = edge_num = k * k / 2
         host_num = edge_num * k / 2
 
+
         # add core switches
-        self.cores = [self.addSwitch(idx, protocols='OpenFlow10')
-                     for idx in range(core_num)]
+        self.cores_ = [self.addSwitch('cs%d' % switchId, dpid=("%X" % ((k << 24) + (3 << 8) + switchId))
+                                      , protocols='OpenFlow10') for switchId in range(core_num)]
+
+
         # add aggregation switches
-        self.aggrs = [self.addSwitch(idx, protocols='OpenFlow10')
-                     for idx in range(aggr_num)]
+        self.aggrs_ = [self.addSwitch('as%d' % switchId, dpid=("%X" % ((k << 24) + (2 << 8) + switchId))
+                                      , protocols='OpenFlow10') for switchId in range(aggr_num)]
 
         # add edge switches
-        self.edges = [self.addSwitch(idx, protocols='OpenFlow10')
-                     for idx in range(edge_num)]
+        self.edges_ = [self.addSwitch('es%d' % switchId, dpid=("%X" % ((k << 24) + (1 << 8) + switchId))
+                                      , protocols='OpenFlow10') for switchId in range(edge_num)]
 
         # add hosts
-        self.hosts = [self.addHost(idx) for idx in range(host_num)]
+       # self.hosts_ = [self.addHost('h%d' % idx) for idx in range(host_num)]
+        self.hosts_ = [self.addHost('h%d' % switchId) for switchId in range(host_num)]
 
         # add links between hosts and edge switches
-        self.links = [self.addLink(self.hosts[idx], self.edges[idx / 2])
-                      for idx in range(host_num)]
+       # self.links_ = [self.addLink(self.hosts_[idx], self.edges_[idx / (k / 2)])
+        #             for idx in range(host_num)]
+
+        self.links_ = [self.addLink(self.hosts_[idx], self.edges_[idx / (k / 2)]) for idx in range(host_num)]
 
         # add links between edge switches and aggregation switches
-        self.links += [self.addLink(self.edges[i], self.aggrs[j])
-                       for i in range(edge_num) for j in range(i / 2, i / 2 + 2)]
+       # self.links_ += [self.addLink(self.edges_[i], self.aggrs_[j])
+        #             for i in range(edge_num) for j in range(i / (k / 2), i / (k / 2) + k / 2)]
+        self.links_ += [self.addLink(self.edges_[i], self.aggrs_[j])
+                        for i in range(edge_num) for j in range(i / (k / 2) * (k / 2), i / (k / 2) * (k / 2) + k / 2)]
 
         # add links between aggregation switches and core switches
-        self.links += [self.addLink(self.aggrs[i], self.cores[j])
-                       for i in range(aggr_num) for j in range(core_num)]
+       # self.links_ += [self.addLink(self.aggrs_[i], self.cores_[j])
+        #             for i in range(aggr_num) for j in range(core_num)]
+        self.links_ += [self.addLink(self.cores_[i], self.aggrs_[j])
+                        for i in range(core_num) for j in range(i / (k / 2), aggr_num, k / 2)]
 
 
     @classmethod
