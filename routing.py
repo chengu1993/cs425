@@ -23,14 +23,13 @@ class Controller(app_manager.RyuApp):
         def route_protocol(base_priority, **spec):
             if sw_type == 1:  # edge switches
 
-                base_dst = 10 << 24
-                for i in range(1, pow(k / 2, 2) * k + 1):
-                    match = parser.OFPMatch(nw_dst=(base_dst + i), **spec)
-                    action = parser.OFPActionOutput(k / 2 + 1 + (i % (k / 2)))
+                for i in range(1, k / 2 + 1):
+                    match = parser.OFPMatch(in_port=i, **spec)
+                    action = parser.OFPActionOutput(i + k / 2)
                     match_action_add(match, action, 1100 + base_priority)
 
                 # Downward
-                base_dst += sw_id * (k / 2)
+                base_dst = (10 << 24) + sw_id * (k / 2)
                 for i in range(1, k / 2 + 1):
                     match = parser.OFPMatch(nw_dst=(base_dst + i), **spec)
                     action = parser.OFPActionOutput(i)
@@ -38,14 +37,13 @@ class Controller(app_manager.RyuApp):
 
             elif sw_type == 2:  # aggregation switches
 
-                base_dst = 10 << 24
-                for i in range(1, pow(k / 2, 2) * k + 1):
-                    match = parser.OFPMatch(nw_dst=(base_dst + i), **spec)
-                    action = parser.OFPActionOutput(k / 2 + 1 + (i % (k / 2)))
+                for i in range(1, k / 2 + 1):
+                    match = parser.OFPMatch(in_port=i, **spec)
+                    action = parser.OFPActionOutput(i + k / 2)
                     match_action_add(match, action, 1100 + base_priority)
 
                 # Downward
-                base_dst +=sw_id / (k / 2) * pow(k / 2, 2)
+                base_dst = (10 << 24) + sw_id / (k / 2) * pow(k / 2, 2)
                 for i in range(1, pow(k / 2, 2) + 1):
                     match = parser.OFPMatch(nw_dst=(base_dst + i), **spec)
                     action = parser.OFPActionOutput((i - 1) / (k / 2) + 1)

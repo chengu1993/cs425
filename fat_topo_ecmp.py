@@ -11,20 +11,20 @@ class FatTopo(Topo):
 
         # add core switches
         self.cores_ = [self.addSwitch('cs%d' % switchId, dpid=("%X" % ((k << 24) + (3 << 8) + switchId))
-                                      , protocols='OpenFlow10') for switchId in range(core_num)]
+                                      , protocols='OpenFlow13') for switchId in range(core_num)]
 
 
         # add aggregation switches
         self.aggrs_ = [self.addSwitch('as%d' % switchId, dpid=("%X" % ((k << 24) + (2 << 8) + switchId))
-                                      , protocols='OpenFlow10') for switchId in range(aggr_num)]
+                                      , protocols='OpenFlow13') for switchId in range(aggr_num)]
 
         # add edge switches
         self.edges_ = [self.addSwitch('es%d' % switchId, dpid=("%X" % ((k << 24) + (1 << 8) + switchId))
-                                      , protocols='OpenFlow10') for switchId in range(edge_num)]
+                                      , protocols='OpenFlow13') for switchId in range(edge_num)]
 
         # add hosts
        # self.hosts_ = [self.addHost('h%d' % idx) for idx in range(host_num)]
-        self.hosts_ = [self.addHost('h%d' % switchId) for switchId in range(host_num)]
+        self.hosts_ = [self.addHost('h%d' % (switchId+1)) for switchId in range(host_num)]
 
         # add links between hosts and edge switches
        # self.links_ = [self.addLink(self.hosts_[idx], self.edges_[idx / (k / 2)])
