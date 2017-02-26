@@ -24,7 +24,7 @@ class FatTopo(Topo):
 
         # add hosts
        # self.hosts_ = [self.addHost('h%d' % idx) for idx in range(host_num)]
-        self.hosts_ = [self.addHost('h%d' % switchId) for switchId in range(host_num)]
+        self.hosts_ = [self.addHost('h%d' % (switchId+1)) for switchId in range(host_num)]
 
         # add links between hosts and edge switches
        # self.links_ = [self.addLink(self.hosts_[idx], self.edges_[idx / (k / 2)])
@@ -49,4 +49,4 @@ class FatTopo(Topo):
     def create(cls, k):
         return cls(k)
 
-topos = {'fat_tree': FatTopo.create}
+topos = {'fat_topo': FatTopo.create}

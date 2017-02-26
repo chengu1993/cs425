@@ -49,4 +49,4 @@ class FatTopo(Topo):
     def create(cls, k):
         return cls(k)
 
-topos = {'fat_tree': FatTopo.create}
+topos = {'fat_topo': FatTopo.create}
